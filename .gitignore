@@ -396,4 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/RpahelCocos2D/build_win32
+
+/RpahelCocos2D/win32-build
