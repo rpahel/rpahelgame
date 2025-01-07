@@ -1,4 +1,5 @@
 #include "MainMenuScene.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
 
@@ -7,82 +8,81 @@ Scene* MainMenuScene::createScene()
 	return MainMenuScene::create();
 }
 
-// on "init" you need to initialize your instance
 bool MainMenuScene::init()
 {
-	//////////////////////////////
-	// 1. super init first
 	if (!Scene::init())
 	{
 		return false;
 	}
 
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	const auto visibleSize = Director::getInstance()->getVisibleSize();
+	const Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	/////////////////////////////
-	// 2. add a menu item with "X" image, which is clicked to quit the program
-	//    you may modify it.
-
-	// add a "close" icon to exit the progress. it's an autorelease object
-	auto closeItem = MenuItemImage::create(
-		"CloseNormal.png",
-		"CloseSelected.png",
-		CC_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
-
-	if (closeItem == nullptr ||
-		closeItem->getContentSize().width <= 0 ||
-		closeItem->getContentSize().height <= 0)
-	{
-		printf("Error while loading: 'CloseNormal.png' and 'CloseSelected.png'");
-	}
-	else
-	{
-		float x = origin.x + visibleSize.width - closeItem->getContentSize().width / 2;
-		float y = origin.y + closeItem->getContentSize().height / 2;
-		closeItem->setPosition(Vec2(x, y));
-	}
-
-	// create menu, it's an autorelease object
-	auto menu = Menu::create(closeItem, NULL);
-	menu->setPosition(Vec2::ZERO);
-	this->addChild(menu, 1);
-
-	/////////////////////////////
-	// 3. add your codes below...
-
-	// add a label shows "Hello World"
-	// create and initialize a label
-
-	auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
+	// Title
+	auto label = Label::createWithTTF("Timber Clicker", "fonts/Naluka.ttf", 48);
 	if (label == nullptr)
 	{
-		printf("Error while loading: 'fonts/Marker Felt.ttf'");
+		printf("Error while loading: 'fonts/Naluka.ttf'\n");
 	}
 	else
 	{
-		// position the label on the center of the screen
-		label->setPosition(Vec2(origin.x + visibleSize.width / 2,
-			origin.y + visibleSize.height - label->getContentSize().height));
+		label->setPosition(
+			Vec2(
+				origin.x + visibleSize.width / 2,
+				origin.y + visibleSize.height - label->getContentSize().height));
 
-		// add the label as a child to this layer
+		label->setColor({ 201, 118, 77 });
+
 		this->addChild(label, 1);
 	}
 
-	// add "HelloWorld" splash screen"
-	auto sprite = Sprite::create("HelloWorld.png");
-	if (sprite == nullptr)
+	// Trees
+	auto sprite_ref = Sprite::create("sprites/tree_big.png");
+	if (sprite_ref == nullptr)
 	{
-		printf("Error while loading: 'HelloWorld.png'");
+		printf("Error while loading: 'sprites/tree_big.png'\n");
 	}
 	else
 	{
-		// position the sprite on the center of the screen
-		sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+		const Size spriteSize = sprite_ref->getContentSize();
+		const int horizontal_nb = visibleSize.width / spriteSize.width + 2;
+		const int vertical_nb = 2;
 
-		// add the sprite as a child to this layer
-		this->addChild(sprite, 0);
+		auto spritesNode = Node::create();
+		for (size_t i = 0; i < vertical_nb; i++)
+		{
+			const uint8_t value = i == 0 ? 255 * 0.5f : 255;
+			for (size_t j = 0; j < horizontal_nb; j++)
+			{
+				auto sprite = Sprite::create("sprites/tree_big.png");
+				sprite->setPosition(Vec2(
+					origin.x - spriteSize.width * 0.5f + spriteSize.width * j + spriteSize.width * 0.5f * i,
+					visibleSize.height / 2 + origin.y + 70 - 32 * i));
+
+				sprite->setColor({ value, value, value });
+				spritesNode->addChild(sprite, 0);
+			}
+		}
+
+		this->addChild(spritesNode, 0);
 	}
+
+	// Buttons
+
+	auto menu = Menu::create();
+	menu->setPosition(Vec2::ZERO);
+
+	auto playButton = MenuItemLabel::create(Label::createWithTTF("Play", "fonts/arial.ttf", 32));
+	playButton->setColor({ 255, 255, 255 });
+
+	playButton->setPosition(Vec2(
+		origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 2));
+
+	menu->addChild(playButton, 0);
+
+	this->addChild(menu, 1);
+
 	return true;
 }
 
