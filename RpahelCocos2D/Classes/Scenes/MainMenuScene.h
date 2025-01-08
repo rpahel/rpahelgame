@@ -11,7 +11,8 @@ public:
 	virtual bool init();
 
 	// a selector callback
-	void menuCloseCallback(cocos2d::Ref* pSender);
+	void playGameCallback(cocos2d::Ref* pSender);
+	void quitGameCallback(cocos2d::Ref* pSender);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(MainMenuScene);

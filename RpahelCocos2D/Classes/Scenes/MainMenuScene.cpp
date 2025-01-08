@@ -36,6 +36,20 @@ bool MainMenuScene::init()
 		this->addChild(label, 1);
 	}
 
+	// Background
+	Texture2D* texture = Director::getInstance()->getTextureCache()->addImage("sprites/sky.png");
+	Texture2D::TexParams tp(backend::SamplerFilter::LINEAR, backend::SamplerFilter::LINEAR, backend::SamplerAddressMode::REPEAT, backend::SamplerAddressMode::REPEAT);
+	texture->setTexParameters(tp);
+	Sprite* skyBackground = Sprite::createWithTexture(texture, Rect(0, 0, visibleSize.width, visibleSize.height));
+	skyBackground->setPosition({ visibleSize.width / 2, visibleSize.height / 2 });
+	this->addChild(skyBackground, -1);
+
+	texture = Director::getInstance()->getTextureCache()->addImage("sprites/grass.png");
+	texture->setTexParameters(tp);
+	Sprite* grassBackground = Sprite::createWithTexture(texture, Rect(0, 0, visibleSize.width, visibleSize.height));
+	grassBackground->setPosition({ visibleSize.width / 2, 0 });
+	this->addChild(grassBackground, -1);
+
 	// Trees
 	auto sprite_ref = Sprite::create("sprites/tree_big.png");
 	if (sprite_ref == nullptr)
@@ -47,7 +61,7 @@ bool MainMenuScene::init()
 		const Size spriteSize = sprite_ref->getContentSize();
 		const int horizontal_nb = visibleSize.width / spriteSize.width + 2;
 		const int vertical_nb = 2;
-
+		
 		auto spritesNode = Node::create();
 		for (size_t i = 0; i < vertical_nb; i++)
 		{
@@ -61,6 +75,14 @@ bool MainMenuScene::init()
 
 				sprite->setColor({ value, value, value });
 				spritesNode->addChild(sprite, 0);
+
+				auto grassPatch = Sprite::create("sprites/grass_patch.png");
+				grassPatch->setAnchorPoint({ 0.5f, 0.0f });
+				grassPatch->setPosition(Vec2(sprite->getPositionX(), sprite->getPositionY() - spriteSize.height * 0.5f));
+				grassPatch->setScaleY(0.5f);
+
+				grassPatch->setColor({ value, value, value });
+				spritesNode->addChild(grassPatch, 0);
 			}
 		}
 
@@ -68,34 +90,41 @@ bool MainMenuScene::init()
 	}
 
 	// Buttons
-
 	auto menu = Menu::create();
 	menu->setPosition(Vec2::ZERO);
 
 	auto playButton = MenuItemLabel::create(Label::createWithTTF("Play", "fonts/arial.ttf", 32));
-	playButton->setColor({ 255, 255, 255 });
+	playButton->setColor({ 50, 50, 50 });
 
 	playButton->setPosition(Vec2(
 		origin.x + visibleSize.width / 2,
-		origin.y + visibleSize.height / 2));
+		origin.y + (playButton->getContentSize().height + 16) * 2));
+
+	playButton->setCallback(CC_CALLBACK_1(MainMenuScene::playGameCallback, this));
 
 	menu->addChild(playButton, 0);
+
+	auto quitButton = MenuItemLabel::create(Label::createWithTTF("Quit", "fonts/arial.ttf", 32));
+	quitButton->setColor({ 255, 100, 100 });
+
+	quitButton->setPosition(Vec2(
+		origin.x + visibleSize.width / 2,
+		origin.y + quitButton->getContentSize().height + 16));
+
+	quitButton->setCallback(CC_CALLBACK_1(MainMenuScene::quitGameCallback, this));
+
+	menu->addChild(quitButton, 0);
 
 	this->addChild(menu, 1);
 
 	return true;
 }
 
-
-void MainMenuScene::menuCloseCallback(Ref* pSender)
+void MainMenuScene::playGameCallback(cocos2d::Ref* pSender)
 {
-	//Close the cocos2d-x game scene and quit the application
+}
+
+void MainMenuScene::quitGameCallback(cocos2d::Ref* pSender)
+{
 	Director::getInstance()->end();
-
-	/*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() as given above,instead trigger a custom event created in RootViewController.mm as below*/
-
-	//EventCustom customEndEvent("game_scene_close_event");
-	//_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }
