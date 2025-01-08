@@ -1,4 +1,5 @@
 #include "MainMenuScene.h"
+#include "GameScene.h"
 #include "ui/CocosGUI.h"
 
 USING_NS_CC;
@@ -122,6 +123,8 @@ bool MainMenuScene::init()
 
 void MainMenuScene::playGameCallback(cocos2d::Ref* pSender)
 {
+	auto scene = GameScene::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(1, scene, {255, 255, 255}));
 }
 
 void MainMenuScene::quitGameCallback(cocos2d::Ref* pSender)
