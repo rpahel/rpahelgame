@@ -26,8 +26,8 @@ private:
 	unsigned int highest_score = 0;
 	unsigned int current_score = 0;
 
-	float tree_spawn_cd = 0.1f;
-	float tree_spawn_min_cd = 0.1f;
+	float tree_spawn_cd = 1.0f;
+	float tree_spawn_min_cd = 0.25f;
 	float current_tree_spawn_cd = 0.0f;
 	float tree_spawn_cd_scale = 0.9f;
 

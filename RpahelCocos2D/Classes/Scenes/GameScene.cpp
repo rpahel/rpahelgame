@@ -81,8 +81,6 @@ GameScene::~GameScene()
 
 void GameScene::update(float dt)
 {
-	printf("Update");
-
 	current_tree_spawn_cd -= dt;
 	if (current_tree_spawn_cd > 0)
 		return;
@@ -127,6 +125,29 @@ void GameScene::spawnTree()
 						score_label->getContentSize().width / 2 + 16,
 						visible_size.height - score_label->getContentSize().height / 2 - 16));
 				}
+			}
+		);
+
+		tree->bindToDeathEvent(
+			[this]()
+			{
+				auto label = Label::createWithTTF("YOU LOST", "fonts/Naluka.ttf", 48);
+				if (label == nullptr)
+				{
+					printf("Error while loading: 'fonts/Naluka.ttf'\n");
+				}
+				else
+				{
+					label->setPosition(Vec2(
+							visible_size.width / 2,
+							visible_size.height / 2));
+
+					label->setColor({ 255, 0, 0 });
+
+					this->addChild(label, 0x7fffffff);
+				}
+
+				Director::getInstance()->pause();
 			}
 		);
 
