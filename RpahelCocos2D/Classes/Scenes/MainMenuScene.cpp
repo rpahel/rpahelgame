@@ -20,13 +20,10 @@ bool MainMenuScene::init()
 	const Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	// Highest Score
-	int high_score_signed = UserDefault::getInstance()->getIntegerForKey("HIGH_SCORE");
-	unsigned int high_score_unsigned = 0;
-	std::memcpy(&high_score_unsigned, &high_score_signed, sizeof(int));
-
-	if (high_score_unsigned != 0)
+	const unsigned int high_score = (unsigned int)UserDefault::getInstance()->getIntegerForKey("HIGH_SCORE");
+	if (high_score != 0)
 	{
-		auto scoreLabel = Label::createWithTTF("Highest score : " + std::to_string(high_score_unsigned), "fonts/arial.ttf", 16);
+		auto scoreLabel = Label::createWithTTF("Highest score : " + std::to_string(high_score), "fonts/arial.ttf", 16);
 		if (scoreLabel == nullptr)
 		{
 			printf("Error while loading: 'fonts/arial.ttf'\n");

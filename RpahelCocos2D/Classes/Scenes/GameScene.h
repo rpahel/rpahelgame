@@ -12,6 +12,12 @@ public:
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
+
+	~GameScene();
+
+private:
+	unsigned int highest_score = 0;
+	unsigned int current_score = 0;
 };
 
 #endif // __GAME_SCENE_H__
