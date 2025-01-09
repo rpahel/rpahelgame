@@ -12,7 +12,20 @@ TreeButton* TreeButton::create(const cocos2d::Vec2& position)
 		tree->setScale(0);
 		tree->setPosition(position);
 
-		auto bounceScale = cocos2d::ScaleTo::create(0.5f, tree->tree_scale);
+		tree->addTouchEventListener([tree](Ref* sender, Widget::TouchEventType type) {
+			switch (type)
+			{
+				case Widget::TouchEventType::ENDED:
+					tree->treeClicked();
+					break;
+
+				default:
+					break;
+			}
+			}
+		);
+
+		auto bounceScale = cocos2d::ScaleTo::create(0.5f, cocos2d::RandomHelper::random_real(tree->tree_scale - 0.05f, tree->tree_scale + 0.05f));
 		auto elasticEaseBounceScale = cocos2d::EaseElasticOut::create(bounceScale->clone());
 
 		tree->runAction(elasticEaseBounceScale);
@@ -22,4 +35,17 @@ TreeButton* TreeButton::create(const cocos2d::Vec2& position)
 	}
 	CC_SAFE_DELETE(tree);
 	return nullptr;
+}
+
+void TreeButton::bindToClickEvent(const std::function<void()>& callback)
+{
+	on_click = callback;
+}
+
+void TreeButton::treeClicked()
+{
+	if (on_click)
+		on_click();
+
+	removeFromParent();
 }
