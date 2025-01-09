@@ -1,5 +1,5 @@
 #include "GameScene.h"
-#include "ui/CocosGUI.h"
+#include "../TreeButton.h"
 
 USING_NS_CC;
 
@@ -11,11 +11,11 @@ Scene* GameScene::createScene()
 bool GameScene::init()
 {
 	if (!Scene::init())
-	{
 		return false;
-	}
 
-	const auto visibleSize = Director::getInstance()->getVisibleSize();
+	current_tree_spawn_cd = tree_spawn_cd;
+
+	visibleSize = Director::getInstance()->getVisibleSize();
 	const Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	// Grass background
@@ -68,6 +68,8 @@ bool GameScene::init()
 		this->addChild(highestScoreLabel, 1);
 	}
 
+	this->scheduleUpdate();
+
 	return true;
 }
 
@@ -75,4 +77,33 @@ GameScene::~GameScene()
 {
 	if (current_score > highest_score)
 		UserDefault::getInstance()->setIntegerForKey("HIGH_SCORE", (int)current_score);
+}
+
+void GameScene::update(float dt)
+{
+	printf("Update");
+
+	current_tree_spawn_cd -= dt;
+	if (current_tree_spawn_cd > 0)
+		return;
+
+	tree_spawn_cd *= tree_spawn_cd_scale;
+	current_tree_spawn_cd = tree_spawn_cd;
+
+	spawnTree();
+}
+
+void GameScene::spawnTree()
+{
+	auto tree = TreeButton::create(
+		{
+			visibleSize.width * 0.5f + RandomHelper::random_int(0, 250),
+			visibleSize.height * 0.5f + RandomHelper::random_int(0, 250),
+		}
+	);
+
+	if (tree)
+	{
+		this->addChild(tree, 2);
+	}
 }
